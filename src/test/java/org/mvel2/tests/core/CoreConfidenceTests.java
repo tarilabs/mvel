@@ -4441,6 +4441,54 @@ public class CoreConfidenceTests extends AbstractTest {
     assertEquals(true, MVEL.executeExpression(MVEL.compileExpression("value instanceof ARef", pctx), vars));
     assertEquals(true, MVEL.executeExpression(MVEL.compileExpression("value instanceof " + ARef.class.getCanonicalName(), pctx), vars));
   }
+  
+  public void testMatteo() {
+    ParserConfiguration conf = new ParserConfiguration();
+    boolean doImportNameMethod = true;
+	if (doImportNameMethod) {
+	    Class<?> clazz = CoreConfidenceTests.class;
+	    Method nameMethod = null;
+	    for (Method m : clazz.getMethods()) {
+	    	if (m.getName() == "name") {
+	    		nameMethod = m;
+	    	}
+	    }
+	    System.out.println(nameMethod);
+	    conf.addImport("name", nameMethod);
+    }
+    ParserContext pctx = new ParserContext( conf );
+    pctx.setStrictTypeEnforcement(true);
+    pctx.setStrongTyping(true);
+    pctx.addInput("this", MyPerson.class);
+    
+    ExecutableStatement stmt = (ExecutableStatement) MVEL.compileExpression("name == \"Matteo\"", pctx);
+    System.out.println("stmt: " + stmt.getClass() + stmt);
+    
+    ExecutableStatement stmt2 = (ExecutableStatement) MVEL.compileExpression("name() == \"Matteo\"", pctx);
+    System.out.println("stmt2: " + stmt2.getClass() + stmt2);
+    
+    ExecutableStatement stmt3 = (ExecutableStatement) MVEL.compileExpression("Name == \"Matteo\"", pctx);
+    System.out.println("stmt3: " + stmt3.getClass() + stmt3);
+    
+    MyPerson ctx = new MyPerson("Matteo");
+    
+    Object result1 = MVEL.executeExpression(stmt, ctx);
+	System.out.println(result1);
+	assertEquals(true, result1);
+    
+    Object result2 = MVEL.executeExpression(stmt2, ctx);
+	System.out.println(result2);
+	assertEquals(true, result2);
+    
+    Object result3 = MVEL.executeExpression(stmt3, ctx);
+	System.out.println(result3);
+	assertEquals(true, result3);
+  }
+  
+  public static String name() {
+	  System.out.println("myNAME");
+	  return "Matteo";
+  }
 
   public void testCompilerExceptionFormatting() throws Exception {
     try {

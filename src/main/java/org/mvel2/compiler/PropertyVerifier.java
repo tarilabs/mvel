@@ -160,7 +160,7 @@ public class PropertyVerifier extends AbstractOptimizer {
         }
         return pCtx.getVarOrInputType(property);
       }
-      else if (pCtx.hasImport(property)) {
+      else if (pCtx.hasImport(property) && !pCtx.getInputThisFields().contains(property)) {
         resolvedExternally = false;
         return pCtx.getImport(property);
       }

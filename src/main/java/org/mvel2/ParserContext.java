@@ -61,6 +61,8 @@ public class ParserContext implements Serializable {
 
   private HashMap<String, Class> variables;
   private Map<String, Class> inputs;
+  
+  private Set<String> inputThisFields;
 
   private transient HashMap<String, Map<String, Type>> typeParameters;
   private transient Type[] lastTypeParameters;
@@ -448,6 +450,7 @@ public class ParserContext implements Serializable {
   public void initializeTables() {
     if (variables == null) variables = new LinkedHashMap<String, Class>();
     if (inputs == null) inputs = new LinkedHashMap<String, Class>();
+    if (inputThisFields == null) inputThisFields = new HashSet<String>();
 
     if (variableVisibility == null) {
       initVariableVisibility();
@@ -467,6 +470,7 @@ public class ParserContext implements Serializable {
         for (Field field : ctxType.getFields()) {
           if ((field.getModifiers() & (Modifier.PUBLIC | Modifier.STATIC)) != 0) {
             scope.add(field.getName());
+            inputThisFields.add(field.getName());
           }
         }
 
@@ -477,8 +481,10 @@ public class ParserContext implements Serializable {
                 && (m.getReturnType().equals(boolean.class) || m.getReturnType().equals(Boolean.class)))) {
               String propertyName = ReflectionUtil.getPropertyFromAccessor(m.getName());
               scope.add(propertyName);
+              inputThisFields.add(propertyName);
               propertyName = propertyName.substring(0, 1).toUpperCase() + propertyName.substring(1);
               scope.add(propertyName);
+              inputThisFields.add(propertyName);
             }
             else {
               scope.add(m.getName());
@@ -567,6 +573,14 @@ public class ParserContext implements Serializable {
 
   public void setInputs(Map<String, Class> inputs) {
     this.inputs = inputs;
+  }
+  
+  public Set<String> getInputThisFields() {
+    return inputThisFields;
+  }
+
+  public void setInputThisFields(Set<String> inputThisFields) {
+    this.inputThisFields = inputThisFields;
   }
 
   public List<ErrorDetail> getErrorList() {

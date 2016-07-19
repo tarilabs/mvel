@@ -109,6 +109,7 @@ public class ExpressionCompiler extends AbstractParser {
       fields |= COMPILE_IMMEDIATE;
 
       while ((tk = nextToken()) != null) {
+    	System.out.println(tk.getClass() + " " + tk);
         /**
          * If this is a debug symbol, just add it and continue.
          */

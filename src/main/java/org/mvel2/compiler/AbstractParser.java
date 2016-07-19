@@ -1389,7 +1389,7 @@ public class AbstractParser implements Parser, Serializable {
           }
         }
         else {
-          if (pCtx.hasImport(tmp = new String(expr, st, cursor - st))) {
+          if (pCtx.hasImport(tmp = new String(expr, st, cursor - st)) && !pCtx.getInputThisFields().contains(tmp)) {
             lastWasIdentifier = true;
             return lastNode = new LiteralNode(pCtx.getStaticOrClassImport(tmp), pCtx);
           }
